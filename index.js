@@ -1,8 +1,3 @@
-// const hourNow = timeNow.getHours();
-// const minuteNow = timeNow.getMinutes();
-// console.log(hourNow);
-// console.log(typeof hourNow);
-
 let fajr = null;
 let sunrise = null;
 let dhuhr = null;
@@ -14,8 +9,13 @@ let nextPrayerTime = null;
 const countdownEl = document.getElementById("countdown");
 
 async function fetchPrayerTimes() {
-  const apiUrl =
-    "https://api.aladhan.com/v1/timingsByAddress/25-11-2025?address=birmingham, uk&method=3&shafaq=general&tune=24, 24, 0, 4, -1, 1, 0, -45, 0&timezonestring=UTC&calendarMethod=HJCoSA";
+  const today = new Date();
+  console.log(today.getDate());
+  console.log(today.getMonth() + 1);
+  console.log(today.getFullYear());
+  const apiUrl = `https://api.aladhan.com/v1/timingsByAddress/${today.getDate()}-${
+    today.getMonth() + 1
+  }-${today.getFullYear()}?address=birmingham, uk&method=3&shafaq=general&tune=24, 24, 0, 4, -1, 1, 0, -45, 0&timezonestring=UTC&calendarMethod=HJCoSA`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -57,6 +57,31 @@ function getDateObject(prayerTimeStr) {
   return dateObject;
 }
 
+function updateCountdownDisplay() {
+  const timeNow = new Date();
+  let difference = nextPrayerTime.getTime() - timeNow.getTime();
+
+  const hours = Math.floor(difference / (1000 * 60 * 60));
+  const minutes = Math.floor(difference / (1000 * 60)) % 60;
+
+  let formattedHours = "";
+  let formattedMinutes = "";
+
+  if (hours < 10) {
+    formattedHours = hours.toString().padStart(2, "0");
+  } else {
+    formattedHours = hours.toString();
+  }
+
+  if (minutes < 10) {
+    formattedMinutes = minutes.toString().padStart(2, "0");
+  } else {
+    formattedMinutes = minutes.toString();
+  }
+  console.log(formattedMinutes);
+  countdownEl.textContent = `${formattedHours}:${formattedMinutes}`;
+}
+
 function displayCountdown(prayerTimesArray) {
   const timeNow = new Date();
   if (timeNow > isha) {
@@ -72,31 +97,9 @@ function displayCountdown(prayerTimesArray) {
       }
     }
   }
+  updateCountdownDisplay();
 
-  setInterval(function () {
-    const timeNow = new Date();
-    let difference = nextPrayerTime.getTime() - timeNow.getTime();
-
-    const hours = Math.floor(difference / (1000 * 60 * 60));
-    const minutes = Math.floor(difference / (1000 * 60)) % 60;
-
-    let formattedHours = "";
-    let formattedMinutes = "";
-
-    if (hours < 10) {
-      formattedHours = hours.toString().padStart(2, "0");
-    } else {
-      formattedHours = hours.toString();
-    }
-
-    if (minutes < 10) {
-      formattedMinutes = minutes.toString().padStart(2, "0");
-    } else {
-      formattedMinutes = minutes.toString();
-    }
-
-    countdownEl.textContent = `${formattedHours}:${formattedMinutes}`;
-  }, 60000);
+  setInterval(updateCountdownDisplay, 60000);
 }
 
 assignPrayerTimes();
