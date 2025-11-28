@@ -13,12 +13,13 @@ async function fetchPrayerTimes() {
   console.log(today.getDate());
   console.log(today.getMonth() + 1);
   console.log(today.getFullYear());
-  const apiUrl = `https://api.aladhan.com/v1/timingsByAddress/${today.getDate()}-${
-    today.getMonth() + 1
-  }-${today.getFullYear()}?address=birmingham, uk&method=3&shafaq=general&tune=24, 24, 0, 4, -1, 1, 0, -45, 0&timezonestring=UTC&calendarMethod=HJCoSA`;
+  const apiUrl1 = `https://www.moonsighting.com/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
+  const apiUrl2 = `https://moonsighting.ahmedbukhamsin.sa/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
+
+  let response;
 
   try {
-    const response = await fetch(apiUrl, {
+    response = await fetch(apiUrl1, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -26,13 +27,36 @@ async function fetchPrayerTimes() {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error, status: ${response.status}`);
+      throw new Error(`Primary API failed: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.data.timings;
-  } catch (error) {
-    console.error("Failed to fetch prayer times", error);
+    console.log("Data fetched from primary API");
+    console.log(data);
+    return data;
+  } catch (error1) {
+    console.warn(`Attempt 1 failed: ${error1.message}. Trying second API...`);
+  }
+
+  try {
+    response = await fetch(apiUrl2, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Second API failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Data fetched from second API");
+    console.log(data);
+    return data;
+  } catch (error2) {
+    console.error(`Attempt 2 failed: ${error2.message}`);
+    throw new Error("Failed to fetch prayer times from all available sources");
   }
 }
 
