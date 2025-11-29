@@ -120,14 +120,31 @@ function updateCountdownDisplay() {
   countdownEl.textContent = `${formattedHours}:${formattedMinutes}`;
 }
 
+function convertTimetoMinutes(time) {
+  const [hour, minutes] = time.split(":");
+  const totalMinutes = hour * 60 + minutes;
+  return totalMinutes;
+}
+
+function findCurrentPrayer(todaysPrayerTimes) {
+  const dateObject = new Date();
+  const currentTime = new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+  }).format(dateObject);
+  const currentTimeinMinutes = convertTimetoMinutes(currentTime);
+
+  // return currentPrayerTime, currentPrayerName;
+}
+
 async function displayCountdown() {
   const todaysPrayers = await fetchTodaysPrayerTimes();
-  console.log(typeof todaysPrayers.times.asr);
+  console.log(todaysPrayers.times.asr);
 
-  //   let currentPrayerTime; //how do i find out the current prayer time?
+  let [currentPrayerTime, currentPrayerName] = findCurrentPrayer(todaysPrayers); //how do i find out the current prayer time?
+
   //   let nextPrayerTime; //how do i find out the next prayer time?
 
-  const timeNow = new Date();
   if (timeNow > isha) {
     fajr.setDate(fajr.getDate() + 1); //add a day to get next fajr date object
     console.log(`next prayer is at ${fajr}`);
