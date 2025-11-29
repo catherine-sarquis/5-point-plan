@@ -1,18 +1,6 @@
-let fajr = null;
-let sunrise = null;
-let dhuhr = null;
-let asr = null;
-let maghrib = null;
-let isha = null;
-let nextPrayerTime = null;
-
 const countdownEl = document.getElementById("countdown");
 
-async function fetchPrayerTimes() {
-  const today = new Date();
-  console.log(today.getDate());
-  console.log(today.getMonth() + 1);
-  console.log(today.getFullYear());
+async function letsGetTheLatestTimetable() {
   const apiUrl1 = `https://www.moonsighting.com/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
   const apiUrl2 = `https://moonsighting.ahmedbukhamsin.sa/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
 
@@ -58,6 +46,35 @@ async function fetchPrayerTimes() {
     console.error(`Attempt 2 failed: ${error2.message}`);
     throw new Error("Failed to fetch prayer times from all available sources");
   }
+}
+
+function checkLocalStorageIsUpToDate(currentYear) {
+  if (localStorage.getItem("prayerTimeTable")) {
+    console.log("timetable found... checking that it's up to date");
+    const storedTimetable = JSON.parse(localStorage.getItem(prayerTimetable));
+    if (storedTimetable.query.year != currentYear) {
+      letsGetTheLatestTimetable(currentYear);
+    }
+  } else {
+    console.log("There isn't a timetable, let's get one!");
+    letsGetTheLatestTimetable(currentYear);
+  }
+}
+
+async function fetchPrayerTimes() {
+  const todaysDate = new Date();
+  const month = todaysDate.toLocaleDateString(undefined, { month: "short" });
+  const date = todaysDate.toLocaleDateString(undefined, { day: "numeric" });
+  const weekday = todaysDate.toLocaleDateString(undefined, {
+    weekday: "short",
+  });
+  const year = todaysDate.toLocaleDateString(undefined, { year: "numeric" });
+
+  checkLocalStorageIsUpToDate(year);
+
+  console.log(today.getDate());
+  console.log(today.getMonth() + 1);
+  console.log(today.getFullYear());
 }
 
 async function assignPrayerTimes() {
