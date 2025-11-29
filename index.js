@@ -50,7 +50,6 @@ function checkLocalStorageIsUpToDate(currentYear) {
   if (localStorage.getItem("prayerTimeTable")) {
     console.log("TimeTable found... checking that it's up to date");
     const storedTimeTable = JSON.parse(localStorage.getItem("prayerTimeTable"));
-    console.log(storedTimeTable);
     if (storedTimeTable.query.year != currentYear) {
       letsStoreTheLatestTimeTable(currentYear);
     } else {
@@ -62,7 +61,7 @@ function checkLocalStorageIsUpToDate(currentYear) {
   }
 }
 
-async function fetchPrayerTimes() {
+async function fetchTodaysPrayerTimes() {
   const todaysDate = new Date();
   const month = todaysDate.toLocaleDateString(undefined, { month: "short" });
   const date = todaysDate.toLocaleDateString(undefined, { day: "numeric" });
@@ -72,10 +71,29 @@ async function fetchPrayerTimes() {
   const year = todaysDate.toLocaleDateString(undefined, { year: "numeric" });
 
   checkLocalStorageIsUpToDate(year);
+
+  const dateSearchString = `${month} ${date} ${weekday}`;
+
+  const prayerData = JSON.parse(localStorage.getItem("prayerTimeTable"));
+  const prayerTimesArr = prayerData.times;
+
+  // find the index of the day object that holds today's prayer times
+  const indexOfToday = prayerTimesArr.findIndex(function (todaysData) {
+    return todaysData.day == `${dateSearchString}`;
+  });
+
+  console.log(prayerTimesArr[indexOfToday]);
+
+  return prayerTimesArr[indexOfToday]; //now I know the index of today's prayer times
 }
 
 async function assignPrayerTimes() {
-  const prayerData = await fetchPrayerTimes();
+  const todaysPrayers = await fetchTodaysPrayerTimes();
+
+  const timeNow = new Date();
+  let currentPrayerTime; //how do i find out the current prayer time?
+  let nextPrayerTime; //how do i find out the next prayer time?
+
   fajr = getDateObject(prayerData.Fajr);
   sunrise = getDateObject(prayerData.Sunrise);
   dhuhr = getDateObject(prayerData.Dhuhr);
