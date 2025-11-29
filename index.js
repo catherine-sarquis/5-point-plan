@@ -87,24 +87,6 @@ async function fetchTodaysPrayerTimes() {
   return prayerTimesArr[indexOfToday]; //now I know the index of today's prayer times
 }
 
-async function assignPrayerTimes() {
-  const todaysPrayers = await fetchTodaysPrayerTimes();
-
-  const timeNow = new Date();
-  let currentPrayerTime; //how do i find out the current prayer time?
-  let nextPrayerTime; //how do i find out the next prayer time?
-
-  fajr = getDateObject(prayerData.Fajr);
-  sunrise = getDateObject(prayerData.Sunrise);
-  dhuhr = getDateObject(prayerData.Dhuhr);
-  asr = getDateObject(prayerData.Asr);
-  maghrib = getDateObject(prayerData.Maghrib);
-  isha = getDateObject(prayerData.Isha);
-  console.log(prayerData);
-  const prayerTimesArray = [fajr, sunrise, dhuhr, asr, maghrib, isha];
-  displayCountdown(prayerTimesArray);
-}
-
 function getDateObject(prayerTimeStr) {
   const [hour, minute] = prayerTimeStr.split(":");
   const dateObject = new Date();
@@ -138,7 +120,13 @@ function updateCountdownDisplay() {
   countdownEl.textContent = `${formattedHours}:${formattedMinutes}`;
 }
 
-function displayCountdown(prayerTimesArray) {
+async function displayCountdown() {
+  const todaysPrayers = await fetchTodaysPrayerTimes();
+  console.log(typeof todaysPrayers.times.asr);
+
+  //   let currentPrayerTime; //how do i find out the current prayer time?
+  //   let nextPrayerTime; //how do i find out the next prayer time?
+
   const timeNow = new Date();
   if (timeNow > isha) {
     fajr.setDate(fajr.getDate() + 1); //add a day to get next fajr date object
@@ -158,4 +146,4 @@ function displayCountdown(prayerTimesArray) {
   setInterval(updateCountdownDisplay, 60000);
 }
 
-assignPrayerTimes();
+displayCountdown();
