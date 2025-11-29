@@ -1,6 +1,6 @@
 const countdownEl = document.getElementById("countdown");
 
-async function letsStoreTheLatestTimetable() {
+async function letsStoreTheLatestTimeTable() {
   const apiUrl1 = `https://www.moonsighting.com/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
   const apiUrl2 = `https://moonsighting.ahmedbukhamsin.sa/time_json.php?year=2025&tz=Europe/London&lat=52.4731&lon=-1.8510&method=2&both=0&time=0`;
 
@@ -48,14 +48,17 @@ async function letsStoreTheLatestTimetable() {
 
 function checkLocalStorageIsUpToDate(currentYear) {
   if (localStorage.getItem("prayerTimeTable")) {
-    console.log("timetable found... checking that it's up to date");
-    const storedTimetable = JSON.parse(localStorage.getItem(prayerTimetable));
-    if (storedTimetable.query.year != currentYear) {
-      letsStoreTheLatestTimetable(currentYear);
+    console.log("TimeTable found... checking that it's up to date");
+    const storedTimeTable = JSON.parse(localStorage.getItem("prayerTimeTable"));
+    console.log(storedTimeTable);
+    if (storedTimeTable.query.year != currentYear) {
+      letsStoreTheLatestTimeTable(currentYear);
+    } else {
+      console.log("TimeTable is up to date");
     }
   } else {
-    console.log("There isn't a timetable; let's get one!");
-    letsStoreTheLatestTimetable(currentYear);
+    console.log("There isn't a TimeTable; let's get one!");
+    letsStoreTheLatestTimeTable(currentYear);
   }
 }
 
