@@ -134,16 +134,44 @@ function findCurrentPrayer(todaysPrayerTimes) {
   }).format(dateObject);
   const currentTimeinMinutes = convertTimetoMinutes(currentTime);
 
-  // return currentPrayerTime, currentPrayerName;
+  let currentPrayerTime = null;
+  let currentPrayerName = null;
+
+  Object.entries(todaysPrayerTimes.times).forEach(
+    ([prayerName, prayerTime]) => {
+      let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
+
+      if (
+        prayerTimeMinutes <= currentTimeinMinutes &&
+        prayerName != "asr" &&
+        prayerName != "asr_h" &&
+        prayerName != "sunrise"
+      ) {
+        // this prayer has passed, so could be the current prayer
+        currentPrayerName = prayerName;
+        currentPrayerTime = prayerTime;
+      }
+
+      if (currentPrayerTime === null) {
+        currentPrayerName = "isha";
+      }
+    }
+  );
+
+  return [currentPrayerTime, currentPrayerName];
 }
 
 async function displayCountdown() {
   const todaysPrayers = await fetchTodaysPrayerTimes();
-  console.log(todaysPrayers.times.asr);
 
-  let [currentPrayerTime, currentPrayerName] = findCurrentPrayer(todaysPrayers); //how do i find out the current prayer time?
+  const [currentPrayerTime, currentPrayerName] =
+    findCurrentPrayer(todaysPrayers);
 
-  //   let nextPrayerTime; //how do i find out the next prayer time?
+  console.log(currentPrayerName);
+
+  console.log(`prayer is ${currentPrayerName} at ${currentPrayerTime}`);
+
+  const [nextPrayerTime, nextPrayerName] = findNextPrayer(todaysPrayers);
 
   if (timeNow > isha) {
     fajr.setDate(fajr.getDate() + 1); //add a day to get next fajr date object
