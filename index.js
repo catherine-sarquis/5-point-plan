@@ -150,6 +150,7 @@ function findCurrentPrayer(todaysPrayerTimes) {
         // this prayer has passed, so could be the current prayer
         currentPrayerName = prayerName;
         currentPrayerTime = prayerTime;
+        console.log(typeof prayerTimeMinutes);
       }
 
       if (currentPrayerTime === null) {
@@ -159,6 +160,44 @@ function findCurrentPrayer(todaysPrayerTimes) {
   );
 
   return [currentPrayerTime, currentPrayerName];
+}
+
+function findNextPrayer(todaysPrayerTimes) {
+  const dateObject = new Date();
+  const currentTime = new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+  }).format(dateObject);
+  const currentTimeinMinutes = convertTimetoMinutes(currentTime);
+
+  let nextPrayerTime = null;
+  let nextPrayerName = null;
+
+  Object.entries(todaysPrayerTimes.times).forEach(
+    ([prayerName, prayerTime]) => {
+      let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
+
+      if (
+        prayerTimeMinutes > currentTimeinMinutes &&
+        prayerName != "asr" &&
+        prayerName != "asr_h" &&
+        prayerName != "sunrise"
+      ) {
+        console.log(
+          `${prayerTime} ${prayerTimeMinutes} ${currentTimeinMinutes}`
+        );
+        console.log(typeof currentTimeinMinutes);
+        nextPrayerName = prayerName;
+        nextPrayerTime = prayerTime;
+      }
+
+      if (nextPrayerTime === null) {
+        nextPrayerName = "fajr";
+      }
+    }
+  );
+
+  return [nextPrayerTime, nextPrayerName];
 }
 
 async function displayCountdown() {
@@ -172,20 +211,21 @@ async function displayCountdown() {
   console.log(`prayer is ${currentPrayerName} at ${currentPrayerTime}`);
 
   const [nextPrayerTime, nextPrayerName] = findNextPrayer(todaysPrayers);
+  console.log(`next prayer is ${nextPrayerName} at ${nextPrayerTime}`);
 
-  if (timeNow > isha) {
-    fajr.setDate(fajr.getDate() + 1); //add a day to get next fajr date object
-    console.log(`next prayer is at ${fajr}`);
-    nextPrayerTime = fajr;
-  } else {
-    for (let i = 0; i <= prayerTimesArray.length - 1; i++) {
-      if (prayerTimesArray[i] > timeNow) {
-        console.log(`next prayer is at ${prayerTimesArray[i]}`);
-        nextPrayerTime = prayerTimesArray[i];
-        break;
-      }
-    }
-  }
+  // if (timeNow > isha) {
+  //   fajr.setDate(fajr.getDate() + 1); //add a day to get next fajr date object
+  //   console.log(`next prayer is at ${fajr}`);
+  //   nextPrayerTime = fajr;
+  // } else {
+  //   for (let i = 0; i <= prayerTimesArray.length - 1; i++) {
+  //     if (prayerTimesArray[i] > timeNow) {
+  //       console.log(`next prayer is at ${prayerTimesArray[i]}`);
+  //       nextPrayerTime = prayerTimesArray[i];
+  //       break;
+  //     }
+  //   }
+  // }
   updateCountdownDisplay();
 
   setInterval(updateCountdownDisplay, 60000);
