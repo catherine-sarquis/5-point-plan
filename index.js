@@ -123,8 +123,7 @@ function updateCountdownDisplay() {
 
 function convertTimetoMinutes(time) {
   const [hour, minutes] = time.split(":");
-  const totalMinutes = hour * 60 + minutes;
-  console.log(typeof totalMinutes);
+  const totalMinutes = Number(hour * 60 + minutes);
   return totalMinutes;
 }
 
