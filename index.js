@@ -122,7 +122,8 @@ function updateCountdownDisplay() {
 }
 
 function convertTimetoMinutes(time) {
-  const [hour, minutes] = time.split(":");
+  const timeWhiteSpaceRemoved = String(time).trim();
+  const [hour, minutes] = timeWhiteSpaceRemoved.split(":");
   const totalMinutes = Number(hour * 60 + minutes);
   return totalMinutes;
 }
@@ -151,7 +152,6 @@ function findCurrentPrayer(todaysPrayerTimes) {
         // this prayer has passed, so could be the current prayer
         currentPrayerName = prayerName;
         currentPrayerTime = prayerTime;
-        console.log(typeof prayerTimeMinutes);
       }
 
       if (currentPrayerTime === null) {
