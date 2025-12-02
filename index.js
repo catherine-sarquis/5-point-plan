@@ -174,29 +174,27 @@ function findNextPrayer(todaysPrayerTimes) {
   let nextPrayerTime = null;
   let nextPrayerName = null;
 
-  Object.entries(todaysPrayerTimes.times).forEach(
-    ([prayerName, prayerTime]) => {
-      let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
+  for (const [prayerName, prayerTime] of Object.entries(
+    todaysPrayerTimes.times
+  )) {
+    let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
 
-      if (
-        prayerTimeMinutes > currentTimeinMinutes &&
-        prayerName != "asr" &&
-        prayerName != "asr_h" &&
-        prayerName != "sunrise"
-      ) {
-        console.log(
-          `${prayerTime} ${prayerTimeMinutes} ${currentTimeinMinutes}`
-        );
-        console.log(typeof currentTimeinMinutes);
-        nextPrayerName = prayerName;
-        nextPrayerTime = prayerTime;
-      }
-
-      if (nextPrayerTime === null) {
-        nextPrayerName = "fajr";
-      }
+    if (
+      prayerTimeMinutes > currentTimeinMinutes &&
+      prayerName !== "asr" &&
+      prayerName !== "asr_h" &&
+      prayerName !== "sunrise"
+    ) {
+      nextPrayerName = prayerName;
+      nextPrayerTime = prayerTime;
+      break;
     }
-  );
+
+    if (nextPrayerTime === null) {
+      nextPrayerName = "fajr";
+      nextPrayerTime = todaysPrayerTimes.times.fajr;
+    }
+  }
 
   return [nextPrayerTime, nextPrayerName];
 }
