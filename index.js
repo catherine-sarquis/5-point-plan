@@ -64,7 +64,7 @@ async function checkLocalStorageIsUpToDate(currentYear) {
 async function fetchTodaysPrayerTimes() {
   const todaysDate = new Date();
   const month = todaysDate.toLocaleDateString(undefined, { month: "short" });
-  const date = todaysDate.toLocaleDateString(undefined, { day: "numeric" });
+  const date = todaysDate.toLocaleDateString(undefined, { day: "2-digit" });
   const weekday = todaysDate.toLocaleDateString(undefined, {
     weekday: "short",
   });
