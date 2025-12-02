@@ -46,18 +46,18 @@ async function letsStoreTheLatestTimeTable() {
   }
 }
 
-function checkLocalStorageIsUpToDate(currentYear) {
+async function checkLocalStorageIsUpToDate(currentYear) {
   if (localStorage.getItem("prayerTimeTable")) {
     console.log("TimeTable found... checking that it's up to date");
     const storedTimeTable = JSON.parse(localStorage.getItem("prayerTimeTable"));
     if (storedTimeTable.query.year != currentYear) {
-      letsStoreTheLatestTimeTable(currentYear);
+      await letsStoreTheLatestTimeTable(currentYear);
     } else {
       console.log("TimeTable is up to date");
     }
   } else {
     console.log("There isn't a TimeTable; let's get one!");
-    letsStoreTheLatestTimeTable(currentYear);
+    await letsStoreTheLatestTimeTable(currentYear);
   }
 }
 
@@ -73,6 +73,7 @@ async function fetchTodaysPrayerTimes() {
   checkLocalStorageIsUpToDate(year);
 
   const dateSearchString = `${month} ${date} ${weekday}`;
+  console.log(dateSearchString);
 
   const prayerData = JSON.parse(localStorage.getItem("prayerTimeTable"));
   const prayerTimesArr = prayerData.times;
@@ -123,6 +124,7 @@ function updateCountdownDisplay() {
 function convertTimetoMinutes(time) {
   const [hour, minutes] = time.split(":");
   const totalMinutes = hour * 60 + minutes;
+  console.log(typeof totalMinutes);
   return totalMinutes;
 }
 
