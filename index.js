@@ -138,27 +138,42 @@ function findCurrentPrayer(todaysPrayerTimes) {
 
   let currentPrayerTime = null;
   let currentPrayerName = null;
-
-  Object.entries(todaysPrayerTimes.times).forEach(
-    ([prayerName, prayerTime]) => {
-      let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
-
-      if (
-        prayerTimeMinutes <= currentTimeinMinutes &&
-        prayerName != "asr" &&
-        prayerName != "asr_h" &&
-        prayerName != "sunrise"
-      ) {
-        // this prayer has passed, so could be the current prayer
-        currentPrayerName = prayerName;
-        currentPrayerTime = prayerTime;
-      }
-
-      if (currentPrayerTime === null) {
-        currentPrayerName = "isha";
-      }
+  let arrayOfPossibleTimes = [];
+  for (const [prayerName, prayerTime] of Object.entries(
+    todaysPrayerTimes.times
+  )) {
+    let prayerTimeMinutes = convertTimetoMinutes(prayerTime);
+    if (
+      currentTimeinMinutes > prayerTimeMinutes &&
+      prayerName !== "asr" &&
+      prayerName !== "asr_h" &&
+      prayerName !== "sunrise"
+    ) {
+      arrayOfPossibleTimes.push({
+        prayerName: prayerName,
+        prayerTime: prayerTimeMinutes,
+        difference: prayerTimeMinutes - currentTimeinMinutes,
+      });
     }
-  );
+  }
+
+  console.log(arrayOfPossibleTimes);
+
+  //1. to compare difference of minutes for each of the array's objects, first start with first index.
+
+  currentPrayerName = arrayOfPossibleTimes[0].prayerName;
+  currentPrayerTime = arrayOfPossibleTimes[0].prayerTime;
+  console.log(currentPrayerName);
+
+  //2. then compare the other objects with that initial object's difference.
+  for (let i = 1; i < arrayOfPossibleTimes.length - 1; i++) {
+    if (
+      arrayOfPossibleTimes[i].difference < arrayOfPossibleTimes[0].difference
+    ) {
+      currentPrayerName = arrayOfPossibleTimes[i].prayerName;
+      currentPrayerTime = arrayOfPossibleTimes[i].prayerTime;
+    }
+  }
 
   return [currentPrayerTime, currentPrayerName];
 }
@@ -185,21 +200,30 @@ function findNextPrayer(todaysPrayerTimes) {
       prayerName !== "asr_h" &&
       prayerName !== "sunrise"
     ) {
-      arrayOfPossibleTimes.push(
-        { prayerName: prayerName },
-        { prayerTime: prayerTimeMinutes },
-        { difference: prayerTimeMinutes - currentTimeinMinutes }
-      );
+      arrayOfPossibleTimes.push({
+        prayerName: prayerName,
+        prayerTime: prayerTimeMinutes,
+        difference: prayerTimeMinutes - currentTimeinMinutes,
+      });
     }
   }
 
   console.log(arrayOfPossibleTimes);
 
-  //   if (nextPrayerTime === null) {
-  //     nextPrayerName = "fajr";
-  //     nextPrayerTime = todaysPrayerTimes.times.fajr;
-  //   }
-  // }
+  //1. to compare difference of minutes for each of the array's objects, first start with first index.
+
+  nextPrayerName = arrayOfPossibleTimes[0].prayerName;
+  nextPrayerTime = arrayOfPossibleTimes[0].prayerTime;
+
+  //2. then compare the other objects with that initial object's difference.
+  for (let i = 1; i < arrayOfPossibleTimes.length - 1; i++) {
+    if (
+      arrayOfPossibleTimes[i].difference < arrayOfPossibleTimes[0].difference
+    ) {
+      nextPrayerName = arrayOfPossibleTimes[i].prayerName;
+      nextPrayerTime = arrayOfPossibleTimes[i].prayerTime;
+    }
+  }
 
   return [nextPrayerTime, nextPrayerName];
 }
