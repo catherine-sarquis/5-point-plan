@@ -73,8 +73,6 @@ async function fetchTodaysPrayerTimes() {
   checkLocalStorageIsUpToDate(year);
 
   const dateSearchString = `${month} ${date} ${weekday}`;
-  console.log(dateSearchString);
-
   const prayerData = JSON.parse(localStorage.getItem("prayerTimeTable"));
   const prayerTimesArr = prayerData.times;
 
@@ -84,7 +82,6 @@ async function fetchTodaysPrayerTimes() {
   });
 
   console.log(prayerTimesArr[indexOfToday]);
-
   return prayerTimesArr[indexOfToday]; //now I know the index of today's prayer times
 }
 
@@ -157,13 +154,10 @@ function findCurrentPrayer(todaysPrayerTimes) {
     }
   }
 
-  console.log(arrayOfPossibleTimes);
-
   //1. to compare difference of minutes for each of the array's objects, first start with first index.
 
   currentPrayerName = arrayOfPossibleTimes[0].prayerName;
   currentPrayerTime = arrayOfPossibleTimes[0].prayerTime;
-  console.log(currentPrayerName);
 
   //2. then compare the other objects with that initial object's difference.
   for (let i = 1; i < arrayOfPossibleTimes.length - 1; i++) {
@@ -174,7 +168,6 @@ function findCurrentPrayer(todaysPrayerTimes) {
       currentPrayerTime = arrayOfPossibleTimes[i].prayerTime;
     }
   }
-
   return [currentPrayerTime, currentPrayerName];
 }
 
@@ -233,8 +226,6 @@ async function displayCountdown() {
 
   const [currentPrayerTime, currentPrayerName] =
     findCurrentPrayer(todaysPrayers);
-
-  console.log(currentPrayerName);
 
   console.log(`prayer is ${currentPrayerName} at ${currentPrayerTime}`);
 
