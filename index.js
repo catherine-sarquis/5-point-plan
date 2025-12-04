@@ -121,7 +121,9 @@ function updateCountdownDisplay() {
 function convertTimetoMinutes(time) {
   const timeWhiteSpaceRemoved = String(time).trim();
   const [hour, minutes] = timeWhiteSpaceRemoved.split(":");
-  const totalMinutes = Number(hour * 60 + minutes);
+  const hourInt = Number(hour);
+  const minutesInt = Number(minutes);
+  const totalMinutes = hourInt * 60 + minutesInt;
   return totalMinutes;
 }
 
@@ -153,19 +155,28 @@ function findCurrentPrayer(todaysPrayerTimes) {
       });
     }
   }
+  //if current time is more than isha then it's isha time still, if current time is less than fajr, then it's also isha time still
+  if (
+    currentTimeinMinutes >=
+      convertTimetoMinutes(todaysPrayerTimes.times.isha) ||
+    currentTimeinMinutes <= convertTimetoMinutes(todaysPrayerTimes.times.fajr)
+  ) {
+    currentPrayerName = "isha";
+    currentPrayerTime = convertTimetoMinutes(todaysPrayerTimes.times.isha);
+  } else {
+    //1. to compare difference of minutes for each of the array's objects, first start with first index.
 
-  //1. to compare difference of minutes for each of the array's objects, first start with first index.
+    currentPrayerName = arrayOfPossibleTimes[0].prayerName;
+    currentPrayerTime = arrayOfPossibleTimes[0].prayerTime;
 
-  currentPrayerName = arrayOfPossibleTimes[0].prayerName;
-  currentPrayerTime = arrayOfPossibleTimes[0].prayerTime;
-
-  //2. then compare the other objects with that initial object's difference.
-  for (let i = 1; i < arrayOfPossibleTimes.length - 1; i++) {
-    if (
-      arrayOfPossibleTimes[i].difference < arrayOfPossibleTimes[0].difference
-    ) {
-      currentPrayerName = arrayOfPossibleTimes[i].prayerName;
-      currentPrayerTime = arrayOfPossibleTimes[i].prayerTime;
+    //2. then compare the other objects with that initial object's difference.
+    for (let i = 1; i < arrayOfPossibleTimes.length - 1; i++) {
+      if (
+        arrayOfPossibleTimes[i].difference < arrayOfPossibleTimes[0].difference
+      ) {
+        currentPrayerName = arrayOfPossibleTimes[i].prayerName;
+        currentPrayerTime = arrayOfPossibleTimes[i].prayerTime;
+      }
     }
   }
   return [currentPrayerTime, currentPrayerName];
@@ -200,8 +211,6 @@ function findNextPrayer(todaysPrayerTimes) {
       });
     }
   }
-
-  console.log(arrayOfPossibleTimes);
 
   //1. to compare difference of minutes for each of the array's objects, first start with first index.
 
