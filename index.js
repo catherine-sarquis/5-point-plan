@@ -69,6 +69,40 @@ function createDateObject(timeStr) {
 
 async function startApp() {
   const prayerData = await fetchPrayerTimes();
+
+  if (!prayerData) {
+    countdownEl.textContent = "Could not find today's prayer times.";
+    return;
+  }
+
+  const now = new Date();
+  let nextPrayerName = "";
+
+  const prayers = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
+
+  for (let name of prayers) {
+    const timeStr = prayerData.times[name];
+    console.log(timeStr);
+    const prayerDate = createDateObject(timeStr);
+
+    if (prayerDate > now) {
+      targetDate = prayerDate;
+      nextPrayerName = name;
+      break;
+    }
+  }
+
+  // if it's after isha, targetDate to be set to fajr tomorrow
+  if (!targetDate) {
+    const fajrTime = prayerData["fajr"];
+    targetDate = createDateObject(fajrTime);
+    targetDate.setDate(targetDate.getDate() + 1);
+    nextPrayerName = "fajr";
+  }
+
+  console.log(`Next prayer is ${nextPrayerName} at ${targetDate}`);
+
+  //start the countdown immediately
 }
 
 startApp();
