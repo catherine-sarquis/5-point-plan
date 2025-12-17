@@ -66,3 +66,9 @@ function createDateObject(timeStr) {
   date.setSeconds(0);
   return date;
 }
+
+async function startApp() {
+  const prayerData = await fetchPrayerTimes();
+}
+
+startApp();
