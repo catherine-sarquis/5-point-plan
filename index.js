@@ -57,4 +57,12 @@ function findTodaysTimes(data) {
   return todaysData ? todaysData : null;
 }
 
-fetchPrayerTimes();
+//function to convert time string into a date object for today
+function createDateObject(timeStr) {
+  const [hours, minutes] = timeStr.split(":");
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  date.setSeconds(0);
+  return date;
+}
