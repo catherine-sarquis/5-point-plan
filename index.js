@@ -29,3 +29,32 @@ async function fetchPrayerTimes() {
     countdownEl.textContent = "Error loading times.";
   }
 }
+
+function findTodaysTimes(data) {
+  const today = new Date();
+  const month = today.toLocaleDateString(undefined, { month: "short" });
+  const date = today.toLocaleDateString(undefined, { day: "2-digit" });
+  const weekday = today.toLocaleDateString(undefined, {
+    weekday: "short",
+  });
+  const year = today.toLocaleDateString(undefined, { year: "numeric" });
+
+  const searchString = `${month} ${day} ${weekday}`;
+
+  //find the object in the array that 'day' matches to
+  const todaysData = data.times.find((timeEntry) => {
+    const isExactMatch = timeEntry.day === searchString;
+
+    const isPartialMatch = timeEntry.day.includes(searchString);
+
+    if (isExactMatch || isPartialMatch) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  console.log(todaysData);
+  return todaysData ? todaysData : null;
+}
+
+fetchPrayerTimes();
