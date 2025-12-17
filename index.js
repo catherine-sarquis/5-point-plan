@@ -1,4 +1,4 @@
-const countdownEl = document.getElementById("coundown");
+const countdownEl = document.getElementById("countdown");
 let targetDate; // this is to store the countdown target
 
 // ---- API ---- //
@@ -103,6 +103,32 @@ async function startApp() {
   console.log(`Next prayer is ${nextPrayerName} at ${targetDate}`);
 
   //start the countdown immediately
+  setInterval(updateCountdownDisplay, 60000);
+  updateCountdownDisplay();
+}
+
+function updateCountdownDisplay() {
+  if (!targetDate) return;
+
+  const timeNow = new Date();
+  const difference = targetDate - timeNow;
+
+  if (difference <= 0) {
+    startApp(); // re-run when timer hits 0
+  }
+
+  const day = 1000 * 60 * 60 * 24;
+  const hour = 1000 * 60 * 60;
+  const minute = 1000 * 60;
+
+  const hoursRemaining = Math.floor((difference % day) / hour);
+  const minutesRemaining = Math.floor((difference % hour) / minute);
+
+  // format for display 05:51
+  const h = hoursRemaining.toString().padStart(2, "0");
+  const m = minutesRemaining.toString().padStart(2, "0");
+
+  countdownEl.textContent = `${h}:${m}`;
 }
 
 startApp();
