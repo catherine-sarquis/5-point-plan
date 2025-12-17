@@ -33,7 +33,7 @@ async function fetchPrayerTimes() {
 function findTodaysTimes(data) {
   const today = new Date();
   const month = today.toLocaleDateString(undefined, { month: "short" });
-  const date = today.toLocaleDateString(undefined, { day: "2-digit" });
+  const day = today.toLocaleDateString(undefined, { day: "2-digit" });
   const weekday = today.toLocaleDateString(undefined, {
     weekday: "short",
   });
